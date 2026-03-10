@@ -1,0 +1,174 @@
+.instagram-preview {
+  background: #000;
+  color: #f5f5f5;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+}
+
+.ig-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+}
+
+.ig-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.ig-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.ig-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ig-username {
+  font-size: 14px;
+  font-weight: 600;
+  color: #f5f5f5;
+}
+
+.ig-sponsored {
+  font-size: 11px;
+  color: #a8a8a8;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ig-more {
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  color: #f5f5f5;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+}
+
+.ig-image-wrap {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #1a1a1a;
+  overflow: hidden;
+}
+
+.ig-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.ig-image-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+  color: #666;
+  font-size: 14px;
+}
+
+.ig-actions {
+  padding: 6px 16px 8px;
+}
+
+.ig-action-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ig-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+
+.ig-heart {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2'%3E%3Cpath d='M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+.ig-comment {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2'%3E%3Cpath d='M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+.ig-share {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2'%3E%3Cline x1='4' y1='12' x2='20' y2='12'/%3E%3Cpolyline points='16 6 20 12 16 18'/%3E%3Cline x1='8' y1='18' x2='20' y2='18'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+.ig-bookmark {
+  margin-left: auto;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2'%3E%3Cpath d='M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+.ig-cta-below-image {
+  padding: 12px 16px;
+  border-bottom: 1px solid #262626;
+}
+
+.ig-cta-btn {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  background: #1877f2;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.ig-cta-btn:hover {
+  background: #166fe5;
+}
+
+.ig-caption-wrap {
+  padding: 0 16px 12px;
+}
+
+.ig-caption {
+  font-size: 14px;
+  line-height: 1.4;
+  margin: 0;
+  color: #f5f5f5;
+}
+
+.ig-caption-username {
+  font-weight: 600;
+  margin-right: 4px;
+}
+
+.ig-caption.placeholder {
+  color: #a8a8a8;
+  font-style: italic;
+}
+
+.ig-more-text {
+  color: #a8a8a8;
+  cursor: pointer;
+}
