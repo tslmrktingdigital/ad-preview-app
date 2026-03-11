@@ -310,6 +310,112 @@
   text-decoration: underline;
 }
 
+.export-share-btn {
+  color: #fff;
+  background: #059669;
+  border: none;
+}
+
+.export-share-btn:hover:not(:disabled) {
+  background: #047857;
+}
+
+.export-share-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.share-link-box {
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+.share-link-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.share-link-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.share-link-input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.copy-link-btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.copy-link-btn:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.share-error {
+  color: #dc2626;
+  font-size: 0.9rem;
+  margin: 0 0 1rem;
+}
+
+/* ShareableView (public view page) */
+.shareable-view {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.shareable-loading,
+.shareable-error {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.shareable-error a {
+  color: var(--accent);
+  margin-top: 1rem;
+  display: inline-block;
+}
+
+.shareable-header {
+  margin-bottom: 1.5rem;
+}
+
+.shareable-header h1 {
+  font-size: 1.5rem;
+  margin: 0 0 0.25rem;
+}
+
+.shareable-subtitle {
+  color: var(--text-muted);
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.shareable-previews {
+  margin: 0;
+}
+
 .previews-section h2 {
   font-size: 1rem;
   font-weight: 600;

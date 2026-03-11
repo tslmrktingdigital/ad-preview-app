@@ -71,6 +71,9 @@ function App() {
 
   const exportRef = useRef(null)
   const [isExporting, setIsExporting] = useState(false)
+  const [shareUrl, setShareUrl] = useState('')
+  const [shareLoading, setShareLoading] = useState(false)
+  const [shareError, setShareError] = useState('')
 
   const handleExportPdf = useCallback(async () => {
     const el = exportRef.current
@@ -101,6 +104,43 @@ function App() {
       setIsExporting(false)
     }
   }, [isExporting])
+
+  const handleGetShareLink = useCallback(async () => {
+    setShareError('')
+    setShareUrl('')
+    setShareLoading(true)
+    try {
+      const res = await fetch('/api/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          facebookPageName,
+          instagramUsername,
+          copy,
+          headline,
+          cta,
+          websiteUrl,
+          imagePreview,
+          storyImagePreview,
+          profileLogoPreview,
+        }),
+      })
+      const data = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(data.error || 'Failed to create link')
+      setShareUrl(data.url || `${window.location.origin}/view/${data.id}`)
+    } catch (e) {
+      setShareError(e.message || 'Something went wrong')
+    } finally {
+      setShareLoading(false)
+    }
+  }, [facebookPageName, instagramUsername, copy, headline, cta, websiteUrl, imagePreview, storyImagePreview, profileLogoPreview])
+
+  const handleCopyShareLink = useCallback(() => {
+    if (!shareUrl) return
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      /* copied */
+    })
+  }, [shareUrl])
 
   const handleExportHtml = useCallback(() => {
     const esc = (s) => {
@@ -487,11 +527,31 @@ ${copyText ? `<div class="fb-body-text">${copyText}</div>` : '<div class="fb-bod
             className="export-html-btn"
             onClick={handleExportHtml}
           >
-            Export as HTML (shareable link)
+            Export as HTML
+          </button>
+          <button
+            type="button"
+            className="export-share-btn"
+            onClick={handleGetShareLink}
+            disabled={shareLoading}
+          >
+            {shareLoading ? 'Creating link…' : 'Get shareable link'}
           </button>
         </div>
+        {shareUrl && (
+          <div className="share-link-box">
+            <label className="share-link-label">Link for your client (videos &amp; GIFs play):</label>
+            <div className="share-link-row">
+              <input type="text" readOnly value={shareUrl} className="share-link-input" />
+              <button type="button" className="copy-link-btn" onClick={handleCopyShareLink}>
+                Copy
+              </button>
+            </div>
+          </div>
+        )}
+        {shareError && <p className="share-error">{shareError}</p>}
         <p className="export-hint">
-          Share with clients: export as HTML, then upload the file to Google Drive, Dropbox, or <a href="https://app.netlify.com/drop" target="_blank" rel="noopener noreferrer">Netlify Drop</a> and share the link. Videos and GIFs will play when they open it.
+          <strong>Shareable link</strong> (above): send the link to your client — they open it in a browser and see the previews with playable video. Or <strong>export as HTML</strong> and upload to Google Drive, Dropbox, or Netlify Drop.
         </p>
         <div className="previews-section export-area" ref={exportRef}>
           <h2>Feed previews (1:1)</h2>
