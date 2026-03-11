@@ -23,7 +23,9 @@ export default async function handler(req, res) {
       return;
     }
 
-    const resp = await fetch(blob.url);
+    const token = process.env.BLOB_READ_WRITE_TOKEN;
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const resp = await fetch(blob.url, { headers });
     if (!resp.ok) {
       res.status(404).json({ error: 'Preview not found' });
       return;

@@ -378,6 +378,13 @@
   margin: 0 0 1rem;
 }
 
+.share-error-detail {
+  font-size: 0.85rem;
+  word-break: break-word;
+  margin-top: 0.5rem;
+  opacity: 0.95;
+}
+
 /* ShareableView (public view page) */
 .shareable-view {
   max-width: 1200px;

@@ -136,10 +136,9 @@ function App() {
         if (res.status === 413) {
           throw new Error('Preview too large. Use smaller images or shorter videos, then try again.')
         }
-        const msg = data.detail
-          ? `${data.error} — ${data.detail}`
-          : (data.error || `Request failed (${res.status} ${res.statusText || 'Error'})`)
-        throw new Error(msg)
+        const parts = [data.error || `Request failed (${res.status})`]
+        if (data.detail) parts.push(data.detail)
+        throw new Error(parts.join('\n\nDetails: '))
       }
       setShareUrl(data.url || `${window.location.origin}/view/${data.id}`)
     } catch (e) {
@@ -563,7 +562,14 @@ ${copyText ? `<div class="fb-body-text">${copyText}</div>` : '<div class="fb-bod
             </div>
           </div>
         )}
-        {shareError && <p className="share-error">{shareError}</p>}
+        {shareError && (
+          <div className="share-error">
+            <p>{shareError.split('\n\n')[0]}</p>
+            {shareError.includes('\n\nDetails:') && (
+              <p className="share-error-detail">{shareError.split('\n\nDetails: ')[1]}</p>
+            )}
+          </div>
+        )}
         <p className="export-hint">
           <strong>Shareable link</strong> (above): send the link to your client — they open it in a browser and see the previews with playable video. Or <strong>export as HTML</strong> and upload to Google Drive, Dropbox, or Netlify Drop.
         </p>

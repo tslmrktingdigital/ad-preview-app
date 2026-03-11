@@ -44,7 +44,7 @@ export default async function handler(req, res) {
 
     const token = process.env.BLOB_READ_WRITE_TOKEN;
     await put(pathname, JSON.stringify(state), {
-      access: 'public',
+      access: 'private',
       contentType: 'application/json',
       ...(token && { token }),
     });
@@ -58,10 +58,18 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error('Save error:', err);
     const friendly = getErrorMessage(err);
-    const detail = err?.message || String(err);
+    const raw = [
+      err?.message,
+      err?.code,
+      err?.name,
+      typeof err?.toString === 'function' ? err.toString() : '',
+    ]
+      .filter(Boolean)
+      .join(' ');
+    const detail = (raw || JSON.stringify(err)).slice(0, 400);
     res.status(500).json({
       error: friendly,
-      detail: detail.slice(0, 200),
+      detail: detail || 'Unknown error',
     });
   }
 }
