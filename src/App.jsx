@@ -110,23 +110,37 @@ function App() {
     setShareUrl('')
     setShareLoading(true)
     try {
+      const payload = {
+        facebookPageName,
+        instagramUsername,
+        copy,
+        headline,
+        cta,
+        websiteUrl,
+        imagePreview,
+        storyImagePreview,
+        profileLogoPreview,
+      }
+      const body = JSON.stringify(payload)
+      const maxBytes = 4 * 1024 * 1024 // 4 MB (Vercel limit is 4.5 MB)
+      if (new TextEncoder().encode(body).length > maxBytes) {
+        throw new Error('Preview too large (images/videos). Use smaller files or shorter clips, then try again.')
+      }
       const res = await fetch('/api/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          facebookPageName,
-          instagramUsername,
-          copy,
-          headline,
-          cta,
-          websiteUrl,
-          imagePreview,
-          storyImagePreview,
-          profileLogoPreview,
-        }),
+        body,
       })
       const data = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(data.error || 'Failed to create link')
+      if (!res.ok) {
+        if (res.status === 413) {
+          throw new Error('Preview too large. Use smaller images or shorter videos, then try again.')
+        }
+        const msg = data.detail
+          ? `${data.error} — ${data.detail}`
+          : (data.error || `Request failed (${res.status} ${res.statusText || 'Error'})`)
+        throw new Error(msg)
+      }
       setShareUrl(data.url || `${window.location.origin}/view/${data.id}`)
     } catch (e) {
       setShareError(e.message || 'Something went wrong')
