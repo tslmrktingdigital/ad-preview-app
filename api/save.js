@@ -1,5 +1,7 @@
 import { put } from '@vercel/blob';
 
+// Uses a public Blob store (e.g. "ad-preview-app-blob"). BLOB_READ_WRITE_TOKEN is read from env by the SDK; we do not pass token in options.
+
 export const config = {
   api: { bodyParser: { sizeLimit: '4mb' } },
 };
@@ -42,11 +44,9 @@ export default async function handler(req, res) {
     const id = randomId();
     const pathname = `previews/${id}.json`;
 
-    const token = process.env.BLOB_READ_WRITE_TOKEN;
     await put(pathname, JSON.stringify(state), {
-      access: 'private',
+      access: 'public',
       contentType: 'application/json',
-      ...(token && { token }),
     });
 
     const baseUrl = process.env.VERCEL_URL
