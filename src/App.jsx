@@ -530,21 +530,6 @@ ${copyText ? `<div class="fb-body-text">${copyText}</div>` : '<div class="fb-bod
           <button
             type="button"
             className="export-pdf-btn"
-            onClick={handleExportPdf}
-            disabled={isExporting}
-          >
-            {isExporting ? 'Exporting…' : 'Export to PDF'}
-          </button>
-          <button
-            type="button"
-            className="export-html-btn"
-            onClick={handleExportHtml}
-          >
-            Export as HTML
-          </button>
-          <button
-            type="button"
-            className="export-share-btn"
             onClick={handleGetShareLink}
             disabled={shareLoading}
           >
@@ -571,7 +556,7 @@ ${copyText ? `<div class="fb-body-text">${copyText}</div>` : '<div class="fb-bod
           </div>
         )}
         <p className="export-hint">
-          <strong>Shareable link</strong> (above): send the link to your client — they open it in a browser and see the previews with playable video. Or <strong>export as HTML</strong> and upload to Google Drive, Dropbox, or Netlify Drop.
+          Send the link above to your client — they open it in a browser and see the previews with playable video.
         </p>
         <div className="previews-section export-area" ref={exportRef}>
           <h2>Feed previews (1:1)</h2>

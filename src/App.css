@@ -255,8 +255,7 @@
   margin-bottom: 0.25rem;
 }
 
-.export-pdf-btn,
-.export-html-btn {
+.export-pdf-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
@@ -267,31 +266,17 @@
   border-radius: 8px;
   cursor: pointer;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-.export-pdf-btn {
   color: #fff;
   background: var(--accent);
 }
 
-.export-pdf-btn:hover {
+.export-pdf-btn:hover:not(:disabled) {
   background: var(--accent-hover);
 }
 
 .export-pdf-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-.export-html-btn {
-  color: var(--accent);
-  background: #fff;
-  border: 1px solid var(--border);
-}
-
-.export-html-btn:hover {
-  background: var(--surface);
-  border-color: var(--accent);
 }
 
 .export-hint {
@@ -308,21 +293,6 @@
 
 .export-hint a:hover {
   text-decoration: underline;
-}
-
-.export-share-btn {
-  color: #fff;
-  background: #059669;
-  border: none;
-}
-
-.export-share-btn:hover:not(:disabled) {
-  background: #047857;
-}
-
-.export-share-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
 }
 
 .share-link-box {

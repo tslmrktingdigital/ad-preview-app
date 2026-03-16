@@ -57,8 +57,10 @@ Previews are styled to resemble real feed ads. Use the "Client / branding" field
 3. **Share that URL** with your coworkers. They can use the app like any website; no install, no VPN (unless your company blocks it).
 
 4. **Shareable links for clients (optional):** To use **Get shareable link** (so you can send clients a direct URL to view the preview with playable video):
-   - In the Vercel project, go to **Storage** → create a **Blob** store (free tier is enough).
-   - Redeploy once. The app will then save previews to Blob and give you a link like `https://your-app.vercel.app/view/abc123` to share.
+   - In the Vercel project, go to **Storage** → **Create Database** → **Blob**.
+   - Create a new Blob store and name it **`ad-preview-app-blob`** (recommended). Choose **Public** access so the app can save and serve previews.
+   - Connect the store to this project if prompted. Redeploy once. The app will then save previews to Blob and give you a link like `https://your-app.vercel.app/view/abc123` to share.
+   - **If shareable links ask users to log into Vercel:** In the project go to **Settings** → **Deployment Protection** and set protection to **None** (or turn off “Vercel Authentication”) so the site and `/view/…` links are public.
 
 **Updates:** Push to GitHub → Vercel redeploys automatically.
 
