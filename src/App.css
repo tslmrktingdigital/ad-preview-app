@@ -70,6 +70,94 @@
   width: 100%;
 }
 
+.variant-tabs,
+.shareable-variant-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.shareable-variant-tabs {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.variant-tab {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.variant-tab:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.variant-tab-active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.variant-tab-add {
+  border-style: dashed;
+  background: transparent;
+}
+
+.variant-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.variant-label-field {
+  flex: 1;
+  min-width: 180px;
+  margin-bottom: 0;
+}
+
+.variant-remove-btn {
+  padding: 0.5rem 0.85rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #b91c1c;
+  background: transparent;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 0.25rem;
+}
+
+.variant-remove-btn:hover {
+  background: #fef2f2;
+}
+
+.ad-content-subheading {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 1rem;
+  color: var(--text-muted);
+}
+
+.preview-variant-note {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+  max-width: 720px;
+}
+
 .previews-column {
   display: flex;
   flex-direction: column;

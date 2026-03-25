@@ -61,6 +61,7 @@ Previews are styled to resemble real feed ads. Use the "Client / branding" field
    - Create a new Blob store and name it **`ad-preview-app-blob`** (recommended). Choose **Public** access so the app can save and serve previews.
    - Connect the store to this project if prompted. Redeploy once. The app will then save previews to Blob and give you a link like `https://your-app.vercel.app/view/abc123` to share.
    - **If shareable links ask users to log into Vercel:** In the project go to **Settings** → **Deployment Protection** and set protection to **None** (or turn off “Vercel Authentication”) so the site and `/view/…` links are public.
+   - **Multiple creative options:** Use **+ Add option** to add more variants (different copy, headline, CTA, link, feed/story media). Each option has its own label for clients. The shareable link shows tabs so clients can switch between options. Old links without `variants` still load as a single option.
 
 **Updates:** Push to GitHub → Vercel redeploys automatically.
 

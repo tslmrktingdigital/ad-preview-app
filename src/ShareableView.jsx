@@ -3,12 +3,14 @@ import FacebookAdPreview from './FacebookAdPreview'
 import InstagramAdPreview from './InstagramAdPreview'
 import FacebookStoryPreview from './FacebookStoryPreview'
 import InstagramStoryPreview from './InstagramStoryPreview'
+import { normalizeVariantsFromState } from './creativeVariants'
 import './App.css'
 
 export default function ShareableView({ id }) {
   const [state, setState] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [variantIndex, setVariantIndex] = useState(0)
 
   useEffect(() => {
     if (!id) {
@@ -47,21 +49,40 @@ export default function ShareableView({ id }) {
   const {
     facebookPageName = '',
     instagramUsername = '',
-    copy: copyText = '',
-    headline = '',
-    cta = 'Learn More',
-    websiteUrl = '',
-    imagePreview = null,
-    storyImagePreview = null,
     profileLogoPreview = null,
   } = state
+
+  const variants = normalizeVariantsFromState(state)
+  const safeIndex = Math.min(variantIndex, Math.max(0, variants.length - 1))
+  const v = variants[safeIndex] ?? variants[0]
 
   return (
     <div className="shareable-view">
       <div className="shareable-header">
         <h1>Ad Preview</h1>
-        <p className="shareable-subtitle">Shared preview — videos and GIFs play below.</p>
+        <p className="shareable-subtitle">
+          Shared preview — videos and GIFs play below.
+          {variants.length > 1 ? ' Choose an option to compare creative.' : ''}
+        </p>
       </div>
+
+      {variants.length > 1 && (
+        <div className="shareable-variant-tabs" role="tablist" aria-label="Creative options">
+          {variants.map((opt, i) => (
+            <button
+              key={opt.id}
+              type="button"
+              role="tab"
+              aria-selected={i === safeIndex}
+              className={`variant-tab ${i === safeIndex ? 'variant-tab-active' : ''}`}
+              onClick={() => setVariantIndex(i)}
+            >
+              {opt.label || `Option ${i + 1}`}
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className="previews-section export-area shareable-previews">
         <h2>Feed previews (1:1)</h2>
         <div className="preview-grid preview-grid-feed">
@@ -73,11 +94,11 @@ export default function ShareableView({ id }) {
             <div className="preview-card-inner">
               <FacebookAdPreview
                 pageName={facebookPageName}
-                copy={copyText}
-                headline={headline}
-                websiteUrl={websiteUrl}
-                cta={cta}
-                imageUrl={imagePreview}
+                copy={v.copy}
+                headline={v.headline}
+                websiteUrl={v.websiteUrl}
+                cta={v.cta}
+                imageUrl={v.imagePreview}
                 avatarUrl={profileLogoPreview}
               />
             </div>
@@ -90,11 +111,11 @@ export default function ShareableView({ id }) {
             <div className="preview-card-inner">
               <InstagramAdPreview
                 username={instagramUsername}
-                copy={copyText}
-                headline={headline}
-                websiteUrl={websiteUrl}
-                imageUrl={imagePreview}
-                cta={cta}
+                copy={v.copy}
+                headline={v.headline}
+                websiteUrl={v.websiteUrl}
+                imageUrl={v.imagePreview}
+                cta={v.cta}
                 avatarUrl={profileLogoPreview}
               />
             </div>
@@ -110,8 +131,8 @@ export default function ShareableView({ id }) {
             <div className="preview-card-inner">
               <FacebookStoryPreview
                 pageName={facebookPageName}
-                imageUrl={storyImagePreview}
-                cta={cta}
+                imageUrl={v.storyImagePreview}
+                cta={v.cta}
                 avatarUrl={profileLogoPreview}
               />
             </div>
@@ -124,8 +145,8 @@ export default function ShareableView({ id }) {
             <div className="preview-card-inner">
               <InstagramStoryPreview
                 username={instagramUsername}
-                imageUrl={storyImagePreview}
-                cta={cta}
+                imageUrl={v.storyImagePreview}
+                cta={v.cta}
                 avatarUrl={profileLogoPreview}
               />
             </div>
