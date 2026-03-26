@@ -14,8 +14,9 @@ export default async function handler(req, res) {
 
   try {
     const pathname = `previews/${id}.json`;
-    const result = await list({ prefix: 'previews/' });
-    const blobs = Array.isArray(result) ? result : (result.blobs || result);
+    // Narrow prefix so we don't rely on paginated list of all previews/
+    const result = await list({ prefix: `previews/${id}`, limit: 10 });
+    const blobs = Array.isArray(result) ? result : (result.blobs || []);
     const blob = blobs.find((b) => b.pathname === pathname);
 
     if (!blob || !blob.url) {

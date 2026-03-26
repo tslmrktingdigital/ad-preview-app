@@ -1,10 +1,39 @@
+import { Buffer } from 'node:buffer';
 import { put } from '@vercel/blob';
 
-// Uses a public Blob store (e.g. "ad-preview-app-blob"). BLOB_READ_WRITE_TOKEN is read from env by the SDK; we do not pass token in options.
+// Uses a public Blob store. BLOB_READ_WRITE_TOKEN is read from env by the SDK.
 
 export const config = {
-  api: { bodyParser: { sizeLimit: '4mb' } },
+  api: { bodyParser: { sizeLimit: '4.5mb' } },
 };
+
+/** Vercel may or may not pre-parse JSON; read the body reliably. */
+async function readJsonBody(req) {
+  if (Buffer.isBuffer(req.body)) {
+    try {
+      return JSON.parse(req.body.toString('utf8'));
+    } catch {
+      return null;
+    }
+  }
+  if (req.body != null && typeof req.body === 'object') {
+    return req.body;
+  }
+  if (typeof req.body === 'string') {
+    try {
+      return JSON.parse(req.body);
+    } catch {
+      return null;
+    }
+  }
+  const chunks = [];
+  for await (const chunk of req) {
+    chunks.push(chunk);
+  }
+  const raw = Buffer.concat(chunks).toString('utf8');
+  if (!raw) return null;
+  return JSON.parse(raw);
+}
 
 function randomId() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
@@ -35,7 +64,13 @@ export default async function handler(req, res) {
   }
 
   try {
-    const state = req.body;
+    let state;
+    try {
+      state = await readJsonBody(req);
+    } catch {
+      res.status(400).json({ error: 'Invalid JSON body' });
+      return;
+    }
     if (!state || typeof state !== 'object') {
       res.status(400).json({ error: 'Invalid body' });
       return;

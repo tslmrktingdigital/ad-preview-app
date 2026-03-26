@@ -123,15 +123,24 @@ function App() {
         variants,
       )
       const body = JSON.stringify(payload)
-      const maxBytes = 4 * 1024 * 1024 // 4 MB (Vercel limit is 4.5 MB)
+      const maxBytes = Math.floor(4.2 * 1024 * 1024) // under Vercel ~4.5 MB function limit; multiple options add up fast
       if (new TextEncoder().encode(body).length > maxBytes) {
-        throw new Error('Preview too large (images/videos). Use smaller files or shorter clips, then try again.')
+        throw new Error(
+          'Preview too large. Remove an option or use smaller images/shorter videos (each option includes feed + story media).',
+        )
       }
-      const res = await fetch('/api/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body,
-      })
+      let res
+      try {
+        res = await fetch('/api/save', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body,
+        })
+      } catch {
+        throw new Error(
+          'Could not reach the server. On your computer: run `npx vercel dev` (port 3000) alongside `npm run dev`, or use the deployed site on Vercel.',
+        )
+      }
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
         if (res.status === 413) {

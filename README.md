@@ -19,6 +19,11 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173).
 
+**Get shareable link** needs the API (`/api/save`). With plain `npm run dev`, either:
+
+- Use your **deployed Vercel URL** to create links, or  
+- Run **`npx vercel dev`** (listens on port **3000** by default) in a second terminal, then **`npm run dev`** — Vite proxies `/api` to that server so the button works locally.
+
 For a **stable link** your coworkers can use anytime (no need for your laptop to be on), deploy the app as a website — see **Make it public so coworkers can use it** below.
 
 ## Build
