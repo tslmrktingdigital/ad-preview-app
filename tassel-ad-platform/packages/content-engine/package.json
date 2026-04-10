@@ -2,6 +2,12 @@
   "name": "@tassel/content-engine",
   "version": "1.0.0",
   "private": true,
+  "main": "./src/index.ts",
+  "exports": {
+    "./generator": "./src/generator.ts",
+    "./style-guide": "./src/style-guide.ts",
+    "./validation": "./src/validation.ts"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",

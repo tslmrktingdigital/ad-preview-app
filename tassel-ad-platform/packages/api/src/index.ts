@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import { clientsRouter } from './routes/clients.js';
 import { campaignsRouter } from './routes/campaigns.js';
@@ -5,13 +6,18 @@ import { adsRouter } from './routes/ads.js';
 import { authRouter } from './routes/auth.js';
 import { errorHandler } from './middleware/error-handler.js';
 
+// Boot background workers (imports register the Worker instances with BullMQ)
+import './jobs/scan-job.js';
+import './jobs/generate-job.js';
+import './jobs/publish-job.js';
+
 const app = express();
 const PORT = process.env.PORT ?? 3001;
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 app.get('/health', (_req, res) => {
-  res.json({ success: true, data: { status: 'ok' } });
+  res.json({ success: true, data: { status: 'ok', timestamp: new Date().toISOString() } });
 });
 
 app.use('/api/auth', authRouter);
@@ -22,7 +28,8 @@ app.use('/api/ads', adsRouter);
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`API server running on port ${PORT}`);
+  console.log(`\nTassel API running on http://localhost:${PORT}`);
+  console.log(`Workers: scan, generate, publish\n`);
 });
 
 export { app };
