@@ -1,0 +1,139 @@
+// This is your Prisma schema file.
+// Run: npx prisma migrate dev --schema=packages/api/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         UserRole   @default(specialist)
+  createdAt    DateTime   @default(now())
+  approvedAds  AdDraft[]  @relation("ApprovedBy")
+  uploadedMedia MediaAsset[]
+
+  @@map("users")
+}
+
+enum UserRole {
+  admin
+  specialist
+  viewer
+}
+
+model Client {
+  id              String         @id @default(cuid())
+  name            String
+  websiteUrl      String
+  metaAccountId   String?
+  metaAccessToken String?        // encrypted at rest
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  schoolProfile   SchoolProfile?
+  campaigns       Campaign[]
+
+  @@map("clients")
+}
+
+model SchoolProfile {
+  id           String   @id @default(cuid())
+  clientId     String   @unique
+  client       Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  profileData  Json
+  scanDate     DateTime @default(now())
+  scanStatus   String   @default("pending")
+  lastEditedBy String?
+
+  @@map("school_profiles")
+}
+
+model Campaign {
+  id                String        @id @default(cuid())
+  clientId          String
+  client            Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name              String
+  goal              String
+  season            String?
+  targetDemographic String?
+  budget            Decimal?
+  startDate         DateTime?
+  endDate           DateTime?
+  status            String        @default("active")
+  createdBy         String?
+  createdAt         DateTime      @default(now())
+  adDrafts          AdDraft[]
+
+  @@map("campaigns")
+}
+
+model AdDraft {
+  id              String         @id @default(cuid())
+  campaignId      String
+  campaign        Campaign       @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  primaryText     String
+  headline        String
+  description     String?
+  cta             String
+  imageBrief      String
+  hashtags        String[]
+  targetingParams Json?
+  status          AdStatus       @default(draft)
+  version         Int            @default(1)
+  promptVersion   String?
+  rejectionReason String?
+  approvedById    String?
+  approvedBy      User?          @relation("ApprovedBy", fields: [approvedById], references: [id])
+  approvedAt      DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  mediaAssets     MediaAsset[]
+  publishingLog   PublishingLog[]
+
+  @@map("ad_drafts")
+}
+
+enum AdStatus {
+  draft
+  in_review
+  approved
+  rejected
+  published
+}
+
+model MediaAsset {
+  id           String    @id @default(cuid())
+  adDraftId    String
+  adDraft      AdDraft   @relation(fields: [adDraftId], references: [id], onDelete: Cascade)
+  fileUrl      String
+  fileType     String    // image | video
+  dimensions   String?
+  fileSize     Int?
+  uploadedById String?
+  uploadedBy   User?     @relation(fields: [uploadedById], references: [id])
+  uploadedAt   DateTime  @default(now())
+
+  @@map("media_assets")
+}
+
+model PublishingLog {
+  id             String    @id @default(cuid())
+  adDraftId      String
+  adDraft        AdDraft   @relation(fields: [adDraftId], references: [id], onDelete: Cascade)
+  metaCampaignId String?
+  metaAdsetId    String?
+  metaAdId       String?
+  apiResponse    Json?
+  status         String
+  publishedAt    DateTime  @default(now())
+  errorMessage   String?
+
+  @@map("publishing_log")
+}
