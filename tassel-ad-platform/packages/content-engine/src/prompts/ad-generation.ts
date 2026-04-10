@@ -1,46 +1,87 @@
 import { TASSEL_STYLE_GUIDE } from '../style-guide.js';
 import type { SchoolProfile, CampaignBrief } from '@tassel/types';
 
-export const AD_GENERATION_PROMPT_VERSION = '1.0';
+export const AD_GENERATION_PROMPT_VERSION = '1.1';
 
 export function buildAdGenerationPrompt(
   schoolProfile: SchoolProfile,
   campaignBrief: CampaignBrief
 ): string {
-  return `
-You are an expert ad copywriter for Tassel Marketing, a digital marketing agency specializing in private and Christian school enrollment campaigns.
+  const isChristian =
+    !!schoolProfile.religiousAffiliation ||
+    !!schoolProfile.denomination;
 
-## Style Guide
+  const locationStr = [schoolProfile.location.city, schoolProfile.location.state]
+    .filter(Boolean)
+    .join(', ');
+
+  const eventsStr = schoolProfile.upcomingEvents
+    .map((e) => `${e.name}${e.date ? ` (${e.date})` : ''}${e.description ? ` — ${e.description}` : ''}`)
+    .join('\n  - ');
+
+  return `
+You are an expert ad copywriter for Tassel Marketing, a digital marketing agency that specializes in enrollment campaigns for private and Christian schools.
+
 ${TASSEL_STYLE_GUIDE}
 
+---
+
 ## School Profile
-School Name: ${schoolProfile.name}
-${schoolProfile.tagline ? `Tagline: ${schoolProfile.tagline}` : ''}
-${schoolProfile.missionStatement ? `Mission: ${schoolProfile.missionStatement}` : ''}
-Grade Levels: ${schoolProfile.gradeLevels.join(', ') || 'Not specified'}
-${schoolProfile.religiousAffiliation ? `Religious Affiliation: ${schoolProfile.religiousAffiliation}` : ''}
-Programs & Differentiators: ${schoolProfile.programs.join(', ') || 'Not specified'}
-Location: ${[schoolProfile.location.city, schoolProfile.location.state].filter(Boolean).join(', ') || 'Not specified'}
-${schoolProfile.testimonials.length > 0 ? `Sample Testimonial: "${schoolProfile.testimonials[0]}"` : ''}
-${schoolProfile.upcomingEvents.length > 0 ? `Upcoming Events: ${schoolProfile.upcomingEvents.map((e) => `${e.name}${e.date ? ` on ${e.date}` : ''}`).join(', ')}` : ''}
+
+**Name:** ${schoolProfile.name}
+${schoolProfile.tagline ? `**Tagline:** ${schoolProfile.tagline}` : ''}
+${schoolProfile.missionStatement ? `**Mission:** ${schoolProfile.missionStatement}` : ''}
+**Type:** ${isChristian ? `Christian school${schoolProfile.denomination ? ` (${schoolProfile.denomination})` : ''}` : 'Private school'}
+**Grades:** ${schoolProfile.gradeLevels.join(', ') || 'Not specified'}
+**Location:** ${locationStr || 'Not specified'}
+${schoolProfile.studentTeacherRatio ? `**Student-to-Teacher Ratio:** ${schoolProfile.studentTeacherRatio}` : ''}
+**Programs & Differentiators:** ${schoolProfile.programs.join(', ') || 'Not specified'}
+${schoolProfile.accreditations.length > 0 ? `**Accreditations:** ${schoolProfile.accreditations.join(', ')}` : ''}
+${schoolProfile.awards.length > 0 ? `**Awards:** ${schoolProfile.awards.join(', ')}` : ''}
+${schoolProfile.tuitionRange ? `**Tuition:** ${schoolProfile.tuitionRange}` : ''}
+${schoolProfile.financialAid ? `**Financial Aid:** ${schoolProfile.financialAid}` : ''}
+${schoolProfile.testimonials.length > 0
+  ? `**Parent Testimonials:**\n  - "${schoolProfile.testimonials.slice(0, 3).join('"\n  - "')}"`
+  : ''}
+${schoolProfile.upcomingEvents.length > 0
+  ? `**Upcoming Events:**\n  - ${eventsStr}`
+  : ''}
+
+---
 
 ## Campaign Brief
-Goal: ${campaignBrief.goal}
-Season: ${campaignBrief.season}
-${campaignBrief.targetDemographic ? `Target Demographic: ${campaignBrief.targetDemographic}` : ''}
-${campaignBrief.messagingEmphasis ? `Messaging Emphasis: ${campaignBrief.messagingEmphasis}` : ''}
-${campaignBrief.toneOverrides ? `Tone Notes: ${campaignBrief.toneOverrides}` : ''}
+
+**Goal:** ${campaignBrief.goal}
+**Season:** ${campaignBrief.season}
+${campaignBrief.targetDemographic ? `**Target Demographic:** ${campaignBrief.targetDemographic}` : ''}
+${campaignBrief.messagingEmphasis ? `**Messaging Emphasis:** ${campaignBrief.messagingEmphasis}` : ''}
+${campaignBrief.toneOverrides ? `**Tone Notes:** ${campaignBrief.toneOverrides}` : ''}
+
+---
 
 ## Task
-Generate 4 ad variations for this campaign. For each variation, produce:
-- primaryText: compelling ad copy (under 150 words)
-- headline: punchy, under 8 words
-- description: optional secondary text (1 sentence)
-- cta: one of LEARN_MORE, APPLY_NOW, SIGN_UP, CONTACT_US
-- imageBrief: a detailed description of the ideal photo or video scene
-- hashtags: 3–5 Instagram hashtags
-- targetingParams: recommended age range and interests
 
-Return a JSON array of exactly 4 ad variation objects. No markdown, no explanation — only the JSON array.
+Generate exactly **4 ad variations** for this campaign. Produce two variations that lean into faith/values messaging and two that focus on academic excellence and community — so the team can A/B test both angles.
+
+For each variation return a JSON object with these exact fields:
+
+\`\`\`
+{
+  "primaryText": string,       // Ad body copy, 2–4 sentences, under 150 words. Lead with the child's experience.
+  "headline": string,          // Short and punchy, under 8 words
+  "description": string,       // One sentence of supporting text (shown below headline)
+  "cta": string,               // One of: LEARN_MORE, APPLY_NOW, SIGN_UP, CONTACT_US
+  "imageBrief": string,        // 2–3 sentence description of the ideal photo or video scene
+  "hashtags": string[],        // 3–5 Instagram hashtags including the school name
+  "targetingParams": {
+    "ageMin": number,
+    "ageMax": number,
+    "locationRadiusMiles": number,
+    "interests": string[]      // 3–6 Facebook interest targeting keywords
+  }
+}
+\`\`\`
+
+Return **only** a valid JSON array of 4 objects. No markdown fences, no explanation, no extra text.
 `.trim();
 }
