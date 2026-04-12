@@ -6,7 +6,14 @@ import type { SchoolProfile, CampaignBrief, AdVariation } from '@tassel/types';
 const MODEL = 'claude-opus-4-5';
 const MAX_RETRIES = 3;
 
-const anthropic = new Anthropic();
+// Lazy getter so the client is created after dotenv has loaded env vars
+let _anthropic: Anthropic | undefined;
+function getClient() {
+  if (!_anthropic) {
+    _anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  }
+  return _anthropic;
+}
 
 export interface GenerationResult {
   variations: AdVariation[];
@@ -25,7 +32,7 @@ export async function generateAdVariations(
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      const message = await anthropic.messages.create({
+      const message = await getClient().messages.create({
         model: MODEL,
         max_tokens: 4096,
         messages: [{ role: 'user', content: prompt }],

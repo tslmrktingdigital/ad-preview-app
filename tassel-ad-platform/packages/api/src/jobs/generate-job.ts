@@ -1,9 +1,18 @@
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { Queue, Worker } from 'bullmq';
 import { redis } from '../lib/redis.js';
 import { prisma } from '../lib/prisma.js';
 import { generateAdVariations } from '@tassel/content-engine/generator';
 import { saveAdDrafts } from '../services/campaign-service.js';
 import type { SchoolProfile, CampaignBrief, CampaignGoal, CampaignSeason } from '@tassel/types';
+
+// Ensure env vars are loaded — workers run in a separate module evaluation context
+// and may not see vars loaded by dotenv/config in index.ts
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '../../../../.env'), override: true });
 
 export interface GenerateJobData {
   campaignId: string;

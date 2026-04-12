@@ -1,4 +1,6 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+// Empty string = use relative URLs so Next.js rewrites proxy to the API server.
+// This keeps browser requests on the same origin and avoids CORS.
+const API_BASE = '';
 
 class ApiError extends Error {
   constructor(public status: number, message: string) {
