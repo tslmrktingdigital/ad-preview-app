@@ -58,3 +58,9 @@ export function usePublishAd(id: string) {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['ads', id] }),
   });
 }
+
+export function useSharePreview(id: string) {
+  return useMutation({
+    mutationFn: () => api.post<{ url: string }>(`/ads/${id}/preview-link`),
+  });
+}

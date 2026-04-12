@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { z } from 'zod';
 import { validate } from '../lib/validate.js';
 import { getAdById, updateAdStatus, updateAdCopy } from '../services/ad-service.js';
+import { buildPreviewLink } from '../services/preview-service.js';
 import { publishQueue } from '../jobs/publish-job.js';
 import { prisma } from '../lib/prisma.js';
 import type { ApiResponse } from '@tassel/types';
@@ -113,6 +114,20 @@ adsRouter.post('/:id/publish', async (req, res, next) => {
       { attempts: 3, backoff: { type: 'exponential', delay: 5000 } }
     );
     res.json({ success: true, data: { jobId: job.id } } satisfies ApiResponse);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/ads/:id/preview-link — Generate a shareable preview URL via ad-preview-app
+adsRouter.post('/:id/preview-link', async (req, res, next) => {
+  try {
+    const ad = await prisma.adDraft.findUniqueOrThrow({
+      where: { id: req.params.id },
+      include: { campaign: { include: { client: true } } },
+    });
+    const url = await buildPreviewLink(ad.campaign?.client, [ad]);
+    res.json({ success: true, data: { url } } satisfies ApiResponse);
   } catch (err) {
     next(err);
   }

@@ -2,9 +2,10 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useAd, useUpdateAd, useApproveAd, useRejectAd, usePublishAd } from '../../../hooks/use-ads';
+import { useAd, useUpdateAd, useApproveAd, useRejectAd, usePublishAd, useSharePreview } from '../../../hooks/use-ads';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { Spinner } from '../../../components/ui/Spinner';
+import { ShareLinkButton } from '../../../components/ui/ShareLinkButton';
 import { FacebookFeedPreview } from '../../../components/previews/FacebookFeedPreview';
 import { InstagramFeedPreview } from '../../../components/previews/InstagramFeedPreview';
 import { InstagramStoriesPreview } from '../../../components/previews/InstagramStoriesPreview';
@@ -29,6 +30,7 @@ export default function AdDetailPage() {
   const approveAd = useApproveAd(adId);
   const rejectAd = useRejectAd(adId);
   const publishAd = usePublishAd(adId);
+  const sharePreview = useSharePreview(adId);
 
   // Local editable state
   const [primaryText, setPrimaryText] = useState('');
@@ -317,7 +319,7 @@ export default function AdDetailPage() {
 
       {/* ── Sticky Action Bar ── */}
       <div className="flex-shrink-0 bg-white border-t border-gray-200 px-6 py-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           {/* Draft / In Review: approve + reject */}
           {(ad.status === 'draft' || ad.status === 'in_review') && (
             <>
@@ -381,6 +383,17 @@ export default function AdDetailPage() {
               Publish to Meta
             </button>
           )}
+
+          {/* Share Preview — always visible */}
+          <div className="ml-auto">
+            <ShareLinkButton
+              label="Share Preview"
+              onGenerate={async () => {
+                const result = await sharePreview.mutateAsync();
+                return result.url;
+              }}
+            />
+          </div>
 
           {/* Published: green label */}
           {ad.status === 'published' && (

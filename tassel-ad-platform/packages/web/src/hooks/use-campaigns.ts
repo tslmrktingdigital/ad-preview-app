@@ -53,3 +53,9 @@ export function useCampaignAds(campaignId: string) {
     enabled: !!campaignId,
   });
 }
+
+export function useShareCampaignPreview(campaignId: string) {
+  return useMutation({
+    mutationFn: () => api.post<{ url: string }>(`/campaigns/${campaignId}/preview-link`),
+  });
+}

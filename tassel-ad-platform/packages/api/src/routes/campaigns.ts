@@ -8,6 +8,8 @@ import {
   listAdDrafts,
 } from '../services/campaign-service.js';
 import { generateQueue } from '../jobs/generate-job.js';
+import { buildPreviewLink } from '../services/preview-service.js';
+import { prisma } from '../lib/prisma.js';
 import type { ApiResponse } from '@tassel/types';
 
 export const campaignsRouter = Router();
@@ -95,6 +97,30 @@ campaignsRouter.get('/:id/generate-status', async (req, res, next) => {
       success: true,
       data: { jobId: job.id, status: state, progress: job.progress, result: job.returnvalue },
     } satisfies ApiResponse);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// POST /api/campaigns/:id/preview-link — Share all non-rejected ads as multi-variant preview
+campaignsRouter.post('/:id/preview-link', async (req, res, next) => {
+  try {
+    const campaign = await prisma.campaign.findUniqueOrThrow({
+      where: { id: req.params.id },
+      include: {
+        client: true,
+        adDrafts: {
+          where: { status: { not: 'rejected' } },
+          orderBy: { createdAt: 'asc' },
+        },
+      },
+    });
+    if (campaign.adDrafts.length === 0) {
+      res.status(400).json({ success: false, error: 'No ads to preview yet' } satisfies ApiResponse);
+      return;
+    }
+    const url = await buildPreviewLink(campaign.client, campaign.adDrafts);
+    res.json({ success: true, data: { url } } satisfies ApiResponse);
   } catch (err) {
     next(err);
   }

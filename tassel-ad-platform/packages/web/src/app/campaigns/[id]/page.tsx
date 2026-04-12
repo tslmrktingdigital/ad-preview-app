@@ -2,10 +2,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useCampaign, useTriggerGenerate, useGenerateStatus, useCampaignAds } from '../../../hooks/use-campaigns';
+import { useCampaign, useTriggerGenerate, useGenerateStatus, useCampaignAds, useShareCampaignPreview } from '../../../hooks/use-campaigns';
 import { StatusBadge } from '../../../components/ui/StatusBadge';
 import { Spinner } from '../../../components/ui/Spinner';
 import { EmptyState } from '../../../components/ui/EmptyState';
+import { ShareLinkButton } from '../../../components/ui/ShareLinkButton';
 
 export default function CampaignDetailPage() {
   const params = useParams();
@@ -16,6 +17,7 @@ export default function CampaignDetailPage() {
   const triggerGenerate = useTriggerGenerate(campaignId);
   const generateStatus = useGenerateStatus(campaignId, generating);
   const { data: ads, isLoading: adsLoading } = useCampaignAds(campaignId);
+  const shareCampaign = useShareCampaignPreview(campaignId);
 
   async function handleGenerate() {
     setGenerating(true);
@@ -85,25 +87,36 @@ export default function CampaignDetailPage() {
           </div>
         </div>
 
-        <button
-          onClick={handleGenerate}
-          disabled={triggerGenerate.isPending || generating}
-          className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg disabled:opacity-60 transition-colors"
-        >
-          {(triggerGenerate.isPending || generating) ? (
-            <>
-              <Spinner size="sm" />
-              Generating…
-            </>
-          ) : (
-            <>
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-              Generate Ads
-            </>
+        <div className="flex items-center gap-3">
+          {ads && ads.length > 0 && (
+            <ShareLinkButton
+              label="Share All Variants"
+              onGenerate={async () => {
+                const result = await shareCampaign.mutateAsync();
+                return result.url;
+              }}
+            />
           )}
-        </button>
+          <button
+            onClick={handleGenerate}
+            disabled={triggerGenerate.isPending || generating}
+            className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg disabled:opacity-60 transition-colors"
+          >
+            {(triggerGenerate.isPending || generating) ? (
+              <>
+                <Spinner size="sm" />
+                Generating…
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                Generate Ads
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Generation progress */}
