@@ -2,6 +2,12 @@
   "name": "@tassel/content-engine",
   "version": "1.0.0",
   "private": true,
+  "main": "./src/index.ts",
+  "exports": {
+    "./generator": "./src/generator.ts",
+    "./style-guide": "./src/style-guide.ts",
+    "./validation": "./src/validation.ts"
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
@@ -11,6 +17,7 @@
   "dependencies": {
     "@anthropic-ai/sdk": "^0.30.0",
     "@tassel/types": "*",
+    "dotenv": "^16.4.5",
     "zod": "^3.23.8"
   },
   "devDependencies": {
