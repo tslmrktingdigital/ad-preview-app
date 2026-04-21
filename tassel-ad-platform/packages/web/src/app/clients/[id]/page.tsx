@@ -34,6 +34,16 @@ export default function ClientDetailPage() {
     refetchInterval: scanning ? 3000 : false,
   });
 
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+  const justConnected = searchParams?.get('metaConnected') === 'true';
+  const metaError = searchParams?.get('metaError');
+
+  const { data: metaStatus } = useQuery({
+    queryKey: ['meta-status', clientId],
+    queryFn: () => api.get<{ connected: boolean; adAccountId: string | null; pageId: string | null }>(`/auth/meta/status?clientId=${clientId}`),
+    enabled: !!clientId,
+  });
+
   const triggerScan = useTriggerScan(clientId);
 
   // Stop polling once profile arrives
@@ -151,6 +161,72 @@ export default function ClientDetailPage() {
               </div>
             </div>
           )}
+
+          {/* Meta Ads Connection */}
+          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-semibold text-gray-900">Meta Ads</h2>
+              {metaStatus?.connected ? (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-green-50 text-green-700 text-xs font-medium rounded-full border border-green-100">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                  Connected
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-gray-100 text-gray-500 text-xs font-medium rounded-full">
+                  Not connected
+                </span>
+              )}
+            </div>
+
+            {justConnected && (
+              <div className="mb-4 p-3 bg-green-50 border border-green-100 rounded-lg text-sm text-green-700">
+                ✓ Meta Ads account connected successfully!
+              </div>
+            )}
+            {metaError && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-100 rounded-lg text-sm text-red-700">
+                Connection failed: {metaError}
+              </div>
+            )}
+
+            {metaStatus?.connected ? (
+              <div className="space-y-2 text-sm">
+                {metaStatus.adAccountId && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500 w-28">Ad Account ID:</span>
+                    <span className="text-gray-900 font-mono text-xs">{metaStatus.adAccountId}</span>
+                  </div>
+                )}
+                {metaStatus.pageId && (
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-500 w-28">Facebook Page:</span>
+                    <span className="text-gray-900 font-mono text-xs">{metaStatus.pageId}</span>
+                  </div>
+                )}
+                <a
+                  href={`/api/auth/meta/connect?clientId=${clientId}`}
+                  className="inline-flex items-center gap-2 mt-3 px-4 py-2 border border-gray-300 bg-white hover:bg-gray-50 text-gray-700 text-sm font-medium rounded-lg transition-colors"
+                >
+                  Reconnect
+                </a>
+              </div>
+            ) : (
+              <div>
+                <p className="text-sm text-gray-500 mb-4">
+                  Connect a Meta Ads account to publish ads directly to Facebook and Instagram.
+                </p>
+                <a
+                  href={`/api/auth/meta/connect?clientId=${clientId}`}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                  </svg>
+                  Connect Meta Ads
+                </a>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Campaigns sidebar */}

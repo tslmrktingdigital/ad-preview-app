@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { validate } from '../lib/validate.js';
 import { getAdById, updateAdStatus, updateAdCopy } from '../services/ad-service.js';
 import { buildPreviewLink } from '../services/preview-service.js';
+import { exportAdsQueueToExcel } from '../services/export-service.js';
 import { publishQueue } from '../jobs/publish-job.js';
 import { prisma } from '../lib/prisma.js';
 import type { ApiResponse } from '@tassel/types';
@@ -23,6 +24,21 @@ const rejectSchema = z.object({
 });
 
 // ── Routes ───────────────────────────────────────────────────────────────────
+
+// GET /api/ads/export.xlsx — must be before /:id to avoid being caught as an id
+adsRouter.get('/export.xlsx', async (req, res, next) => {
+  try {
+    const status = typeof req.query.status === 'string' ? req.query.status : undefined;
+    const buffer = await exportAdsQueueToExcel(status);
+    const date = new Date().toISOString().split('T')[0];
+    const filenameParts = ['ad-queue', status, date].filter(Boolean).join('-');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${filenameParts}.xlsx"`);
+    res.send(buffer);
+  } catch (err) {
+    next(err);
+  }
+});
 
 // GET /api/ads — list all ads (optionally ?status=draft|approved|etc.)
 adsRouter.get('/', async (req, res, next) => {
@@ -145,3 +161,4 @@ adsRouter.get('/:id/publish-status', async (req, res, next) => {
     next(err);
   }
 });
+
