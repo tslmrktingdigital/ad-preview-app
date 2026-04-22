@@ -64,3 +64,30 @@ export function useSharePreview(id: string) {
     mutationFn: () => api.post<{ url: string }>(`/ads/${id}/preview-link`),
   });
 }
+
+export function useGenerateVideo(id: string) {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: () => api.post<{ jobId: string }>(`/ads/${id}/generate-video`),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['ads', id, 'video-status'] }),
+  });
+}
+
+export function useVideoStatus(id: string, enabled: boolean) {
+  return useQuery({
+    queryKey: ['ads', id, 'video-status'],
+    queryFn: () =>
+      api.get<{
+        videoStatus: string | null;
+        videoUrl: string | null;
+        videoError: string | null;
+        videoJobId: string | null;
+      }>(`/ads/${id}/video-status`),
+    enabled: !!id && enabled,
+    refetchInterval: (query) => {
+      const status = query.state.data?.videoStatus;
+      // Keep polling while generating or pending; stop when done
+      return status === 'generating' || status === 'pending' ? 5000 : false;
+    },
+  });
+}

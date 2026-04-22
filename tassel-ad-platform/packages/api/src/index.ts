@@ -10,6 +10,7 @@ import { errorHandler } from './middleware/error-handler.js';
 import './jobs/scan-job.js';
 import './jobs/generate-job.js';
 import './jobs/publish-job.js';
+import './jobs/video-job.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -29,7 +30,7 @@ app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`\nTassel API running on http://localhost:${PORT}`);
-  console.log(`Workers: scan, generate, publish\n`);
+  console.log(`Workers: scan, generate, publish, video\n`);
 });
 
 export { app };
