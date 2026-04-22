@@ -54,4 +54,35 @@ export class MetaClient {
   async getAdStatus(adId: string) {
     return this.request('get', `/${adId}`, { fields: 'status,review_feedback' });
   }
+
+  async getAdAccounts(): Promise<{ data: Array<{ id: string; name: string; account_id: string }> }> {
+    return this.request('get', '/me/adaccounts', { fields: 'id,name,account_id' });
+  }
+
+  async getPages(): Promise<{ data: Array<{ id: string; name: string }> }> {
+    return this.request('get', '/me/accounts', { fields: 'id,name' });
+  }
+
+  static async exchangeCodeForToken(code: string, redirectUri: string): Promise<string> {
+    const appId = process.env.META_APP_ID!;
+    const appSecret = process.env.META_APP_SECRET!;
+    const resp = await axios.get('https://graph.facebook.com/v20.0/oauth/access_token', {
+      params: { client_id: appId, client_secret: appSecret, redirect_uri: redirectUri, code },
+    });
+    return resp.data.access_token as string;
+  }
+
+  static async getLongLivedToken(shortLivedToken: string): Promise<string> {
+    const appId = process.env.META_APP_ID!;
+    const appSecret = process.env.META_APP_SECRET!;
+    const resp = await axios.get('https://graph.facebook.com/v20.0/oauth/access_token', {
+      params: {
+        grant_type: 'fb_exchange_token',
+        client_id: appId,
+        client_secret: appSecret,
+        fb_exchange_token: shortLivedToken,
+      },
+    });
+    return resp.data.access_token as string;
+  }
 }
