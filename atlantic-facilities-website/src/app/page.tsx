@@ -94,19 +94,27 @@ export default function HomePage() {
       />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-blue-900 to-blue-700 text-white py-20 px-4">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-4">
+      <section
+        className="relative text-white py-28 px-4"
+        style={{
+          backgroundImage:
+            'linear-gradient(to bottom right, rgba(15, 40, 100, 0.82), rgba(20, 60, 160, 0.68)), url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h1 className="text-4xl md:text-5xl font-bold leading-tight mb-4 drop-shadow-lg">
             Secure Storage Units in<br className="hidden md:block" /> Wilmington, NC
           </h1>
-          <p className="text-blue-100 text-lg md:text-xl mb-8 max-w-2xl mx-auto">
+          <p className="text-blue-100 text-lg md:text-xl mb-8 max-w-2xl mx-auto drop-shadow">
             Clean, safe, and affordable commercial storage in the heart of Wilmington.
             Units from 300 to 1,200 sq ft — starting at just $225/month.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="tel:+19106175073"
-              className="bg-amber-500 hover:bg-amber-400 text-white font-bold px-8 py-3 rounded-lg text-lg transition-colors"
+              className="bg-amber-500 hover:bg-amber-400 text-white font-bold px-8 py-3 rounded-lg text-lg transition-colors shadow-lg"
             >
               Call (910) 617-5073
             </a>
@@ -116,24 +124,6 @@ export default function HomePage() {
             >
               View All Units
             </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section className="py-16 px-4 bg-gray-50">
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-10">
-            Why Choose Atlantic Facilities?
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((f) => (
-              <div key={f.title} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
-                <div className="text-4xl mb-3">{f.icon}</div>
-                <h3 className="font-bold text-gray-900 mb-2">{f.title}</h3>
-                <p className="text-sm text-gray-600 leading-relaxed">{f.desc}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
@@ -180,8 +170,26 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Features */}
+      <section className="py-16 px-4 bg-gray-50">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-10">
+            Why Choose Atlantic Facilities?
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {features.map((f) => (
+              <div key={f.title} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 text-center">
+                <div className="text-4xl mb-3">{f.icon}</div>
+                <h3 className="font-bold text-gray-900 mb-2">{f.title}</h3>
+                <p className="text-sm text-gray-600 leading-relaxed">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
-      <section className="py-16 px-4 bg-gray-50" aria-labelledby="faq-heading">
+      <section className="py-16 px-4" aria-labelledby="faq-heading">
         <div className="max-w-3xl mx-auto">
           <h2 id="faq-heading" className="text-3xl font-bold text-center text-gray-900 mb-10">
             Frequently Asked Questions
@@ -206,18 +214,28 @@ export default function HomePage() {
       </section>
 
       {/* CTA */}
-      <section className="bg-blue-900 text-white py-16 px-4 text-center">
-        <h2 className="text-3xl font-bold mb-4">Ready to Reserve Your Unit?</h2>
-        <p className="text-blue-200 mb-8 max-w-xl mx-auto">
-          Call us today to check availability and secure your storage space in Wilmington, NC.
-          Ask for Clay.
-        </p>
-        <a
-          href="tel:+19106175073"
-          className="bg-amber-500 hover:bg-amber-400 text-white font-bold px-10 py-4 rounded-lg text-xl transition-colors inline-block"
-        >
-          (910) 617-5073
-        </a>
+      <section
+        className="relative text-white py-20 px-4 text-center"
+        style={{
+          backgroundImage:
+            'linear-gradient(to bottom right, rgba(10, 30, 90, 0.88), rgba(15, 50, 130, 0.78)), url("https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1920&q=80")',
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="relative z-10">
+          <h2 className="text-3xl font-bold mb-4 drop-shadow">Ready to Reserve Your Unit?</h2>
+          <p className="text-blue-200 mb-8 max-w-xl mx-auto">
+            Call us today to check availability and secure your storage space in Wilmington, NC.
+            Ask for Clay.
+          </p>
+          <a
+            href="tel:+19106175073"
+            className="bg-amber-500 hover:bg-amber-400 text-white font-bold px-10 py-4 rounded-lg text-xl transition-colors inline-block shadow-lg"
+          >
+            (910) 617-5073
+          </a>
+        </div>
       </section>
     </>
   );
