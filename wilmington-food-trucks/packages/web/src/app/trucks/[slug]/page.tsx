@@ -1,10 +1,8 @@
 import { notFound } from 'next/navigation';
-import { MapPin, Clock, Globe, Instagram, Facebook, Twitter, ArrowLeft } from 'lucide-react';
+import { MapPin, Clock, Globe, Instagram, Facebook, Twitter, ArrowLeft, UtensilsCrossed } from 'lucide-react';
 import Link from 'next/link';
 import { getTruck } from '../../../lib/api';
 import { formatDate, formatTime } from '../../../lib/utils';
-
-export const revalidate = 300;
 
 const CUISINE_EMOJI: Record<string, string> = {
   bbq: '🔥', mexican: '🌮', seafood: '🦞', asian: '🍜', american: '🍔',
@@ -12,7 +10,15 @@ const CUISINE_EMOJI: Record<string, string> = {
   coffee: '☕', italian: '🍝', other: '🍽️',
 };
 
+const CUISINE_LABELS: Record<string, string> = {
+  bbq: 'BBQ', mexican: 'Mexican', seafood: 'Seafood', asian: 'Asian',
+  american: 'American', caribbean: 'Caribbean', mediterranean: 'Mediterranean',
+  vegan: 'Vegan', desserts: 'Desserts', coffee: 'Coffee', italian: 'Italian', other: 'Other',
+};
+
 interface Props { params: { slug: string } }
+
+export const revalidate = 300;
 
 export default async function TruckPage({ params }: Props) {
   const truck = await getTruck(params.slug).catch(() => null);
@@ -42,34 +48,49 @@ export default async function TruckPage({ params }: Props) {
 
       {/* Hero card */}
       <div className="card overflow-hidden">
-        <div className="bg-orange-500 px-5 pt-6 pb-8">
+        <div className="bg-orange-500 px-5 pt-6 pb-6">
           <div className="w-16 h-16 rounded-2xl bg-white flex items-center justify-center text-3xl shadow-md">
             {emoji}
           </div>
           <h1 className="text-white text-2xl font-extrabold mt-3 leading-tight">{truck.name}</h1>
-          {truck.cuisineTypes.length > 0 && (
-            <p className="text-orange-200 text-sm capitalize mt-0.5">{truck.cuisineTypes.join(' · ')}</p>
-          )}
         </div>
-        {truck.description && (
-          <div className="px-5 py-4 text-stone-600 text-sm leading-relaxed">
-            {truck.description}
-          </div>
-        )}
       </div>
 
-      {/* Social links */}
-      {socialLinks.length > 0 && (
-        <div className="flex gap-2 flex-wrap">
-          {socialLinks.map(({ url, icon: Icon, label }) => (
-            <a key={label} href={url!} target="_blank" rel="noopener noreferrer"
-              className="card flex items-center gap-2 px-4 py-2.5 text-sm font-semibold text-stone-700 hover:border-orange-300 transition-colors active:scale-95">
-              <Icon className="w-4 h-4 text-orange-500" />
-              {label}
-            </a>
-          ))}
+      {/* Menu section */}
+      <section>
+        <div className="flex items-center gap-2 mb-3">
+          <UtensilsCrossed className="w-3.5 h-3.5 text-stone-400" />
+          <h2 className="text-xs font-bold text-stone-400 uppercase tracking-widest">Menu</h2>
         </div>
-      )}
+        <div className="card px-5 py-4 space-y-3">
+          {truck.cuisineTypes.length > 0 && (
+            <div className="flex gap-2 flex-wrap">
+              {truck.cuisineTypes.map((c) => (
+                <span key={c} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-sm font-semibold border border-orange-200">
+                  {CUISINE_EMOJI[c] ?? '🍽️'} {CUISINE_LABELS[c] ?? c}
+                </span>
+              ))}
+            </div>
+          )}
+          {truck.description && (
+            <p className="text-stone-600 text-sm leading-relaxed">{truck.description}</p>
+          )}
+          {socialLinks.length > 0 && (
+            <div>
+              <p className="text-xs text-stone-400 mb-2">Full menu on their socials:</p>
+              <div className="flex gap-2 flex-wrap">
+                {socialLinks.map(({ url, icon: Icon, label }) => (
+                  <a key={label} href={url!} target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-stone-50 border border-stone-200 text-xs font-semibold text-stone-700 hover:border-orange-300 transition-colors active:scale-95">
+                    <Icon className="w-3.5 h-3.5 text-orange-500" />
+                    {label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
 
       {/* Upcoming schedule */}
       <section>
