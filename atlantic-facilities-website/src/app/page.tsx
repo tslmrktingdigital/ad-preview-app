@@ -98,7 +98,7 @@ export default function HomePage() {
         className="relative text-white py-28 px-4"
         style={{
           backgroundImage:
-            'linear-gradient(to bottom right, rgba(15, 40, 100, 0.82), rgba(20, 60, 160, 0.68)), url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1920&q=80")',
+            'linear-gradient(to bottom right, rgba(15, 40, 100, 0.82), rgba(20, 60, 160, 0.68)), url("/hero-waterfront.jpg")',
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -218,7 +218,7 @@ export default function HomePage() {
         className="relative text-white py-20 px-4 text-center"
         style={{
           backgroundImage:
-            'linear-gradient(to bottom right, rgba(10, 30, 90, 0.88), rgba(15, 50, 130, 0.78)), url("https://images.unsplash.com/photo-1519046904884-53103b34b206?w=1920&q=80")',
+            'linear-gradient(to bottom right, rgba(10, 30, 90, 0.88), rgba(15, 50, 130, 0.78)), url("/cta-waterfront.jpg")',
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
