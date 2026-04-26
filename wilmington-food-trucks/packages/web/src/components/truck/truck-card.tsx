@@ -1,8 +1,14 @@
+'use client';
 import Link from 'next/link';
-import Image from 'next/image';
-import { MapPin, Clock } from 'lucide-react';
-import { cn, formatTime } from '../../lib/utils';
+import { MapPin, Clock, ChevronRight } from 'lucide-react';
+import { formatTime } from '../../lib/utils';
 import type { TruckWithTodaySchedule } from '../../lib/api';
+
+const CUISINE_EMOJI: Record<string, string> = {
+  bbq: '🔥', mexican: '🌮', seafood: '🦞', asian: '🍜', american: '🍔',
+  caribbean: '🌴', mediterranean: '🫒', vegan: '🥗', desserts: '🍰',
+  coffee: '☕', italian: '🍝', other: '🍽️',
+};
 
 interface TruckCardProps {
   truck: TruckWithTodaySchedule;
@@ -11,36 +17,28 @@ interface TruckCardProps {
 
 export function TruckCard({ truck, showLocation }: TruckCardProps) {
   const todayEntry = truck.schedule[0];
+  const emoji = truck.cuisineTypes[0] ? (CUISINE_EMOJI[truck.cuisineTypes[0]] ?? '🍽️') : '🚚';
 
   return (
     <Link
       href={`/trucks/${truck.slug}`}
-      className="block bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden active:scale-[0.98] transition-transform"
+      className="card flex items-stretch active:scale-[0.98] transition-transform"
     >
-      <div className="flex items-start gap-3 p-4">
-        <div className="flex-shrink-0">
-          {truck.logoUrl ? (
-            <Image
-              src={truck.logoUrl}
-              alt={truck.name}
-              width={56}
-              height={56}
-              className="rounded-full object-cover w-14 h-14"
-            />
-          ) : (
-            <div className="w-14 h-14 rounded-full bg-brand-100 flex items-center justify-center text-2xl">
-              🚚
-            </div>
-          )}
+      {/* Color stripe */}
+      <div className="w-1.5 bg-orange-500 rounded-l-2xl flex-shrink-0" />
+
+      <div className="flex items-center gap-3 p-4 flex-1 min-w-0">
+        {/* Avatar */}
+        <div className="w-14 h-14 rounded-xl bg-orange-50 flex items-center justify-center text-2xl flex-shrink-0 border border-orange-100">
+          {emoji}
         </div>
 
+        {/* Info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="font-semibold text-stone-900 leading-tight">{truck.name}</h3>
+            <h3 className="font-bold text-stone-900 text-base leading-tight">{truck.name}</h3>
             {showLocation && todayEntry && (
-              <span className="flex-shrink-0 text-xs bg-green-100 text-green-700 font-medium px-2 py-0.5 rounded-full">
-                Out Today
-              </span>
+              <span className="badge-green flex-shrink-0">Out Today</span>
             )}
           </div>
 
@@ -50,23 +48,25 @@ export function TruckCard({ truck, showLocation }: TruckCardProps) {
             </p>
           )}
 
-          {showLocation && todayEntry && (
+          {showLocation && todayEntry ? (
             <div className="mt-2 space-y-1">
-              <div className="flex items-center gap-1.5 text-sm text-stone-600">
-                <MapPin className="w-3.5 h-3.5 text-brand-500 flex-shrink-0" />
+              <div className="flex items-center gap-1.5 text-sm text-stone-600 font-medium">
+                <MapPin className="w-3.5 h-3.5 text-orange-500 flex-shrink-0" />
                 <span className="truncate">{todayEntry.locationName}</span>
               </div>
-              <div className="flex items-center gap-1.5 text-sm text-stone-500">
-                <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+              <div className="flex items-center gap-1.5 text-xs text-stone-400">
+                <Clock className="w-3 h-3 flex-shrink-0" />
                 <span>{formatTime(todayEntry.startTime)} – {formatTime(todayEntry.endTime)}</span>
               </div>
             </div>
-          )}
-
-          {!showLocation && truck.description && (
-            <p className="text-sm text-stone-500 mt-1 line-clamp-2">{truck.description}</p>
+          ) : (
+            <p className="text-sm text-stone-400 mt-1 line-clamp-1">
+              {truck.description ?? 'Tap to see schedule & details'}
+            </p>
           )}
         </div>
+
+        <ChevronRight className="w-4 h-4 text-stone-300 flex-shrink-0" />
       </div>
     </Link>
   );

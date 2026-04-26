@@ -2,19 +2,45 @@ import type { ScheduleEntry } from '@wft/shared';
 
 type ParsedEntry = Omit<ScheduleEntry, 'id' | 'truckId' | 'scrapedAt'>;
 
-// Known Wilmington, NC locations food trucks frequent
+// Known Wilmington-area locations food trucks frequent (sourced from Port City Daily tracker)
 const KNOWN_LOCATIONS: Array<{ pattern: RegExp; name: string; address: string }> = [
-  { pattern: /greenfield\s*lake/i, name: 'Greenfield Lake Park', address: '4100 S 16th St, Wilmington, NC 28401' },
-  { pattern: /wrightsville\s*beach/i, name: 'Wrightsville Beach', address: 'Wrightsville Beach, NC 28480' },
-  { pattern: /cargo\s*district/i, name: 'The Cargo District', address: '110 Cargo District, Wilmington, NC 28403' },
-  { pattern: /soda\s*pop(s)?/i, name: 'Soda Pops', address: '2029 S 17th St, Wilmington, NC 28401' },
-  { pattern: /mayfaire/i, name: 'Mayfaire Town Center', address: '900 Inspiration Dr, Wilmington, NC 28405' },
-  { pattern: /brooklyn\s*arts\s*center/i, name: 'Brooklyn Arts Center', address: '516 N 4th St, Wilmington, NC 28401' },
-  { pattern: /riverfront/i, name: 'Wilmington Riverfront', address: '1 Estell Lee Pl, Wilmington, NC 28401' },
-  { pattern: /castle\s*hayne/i, name: 'Castle Hayne', address: 'Castle Hayne, NC 28429' },
-  { pattern: /ogden\s*park/i, name: 'Ogden Park', address: '3102 16th St Ext, Wilmington, NC 28411' },
-  { pattern: /independence\s*mall/i, name: 'Independence Mall', address: '3500 Oleander Dr, Wilmington, NC 28403' },
-  { pattern: /wave\s*transit/i, name: 'Wave Transit Station', address: '505 Cando St, Wilmington, NC 28405' },
+  // Parks & outdoors
+  { pattern: /greenfield\s*lake/i,           name: 'Greenfield Lake Park',             address: '4100 S 16th St, Wilmington, NC 28401' },
+  { pattern: /ogden\s*park/i,                name: 'Ogden Park',                       address: '615 Ogden Park Dr., Wilmington, NC 28411' },
+  { pattern: /ocean\s*front\s*park/i,        name: 'Ocean Front Park & Pavilion',      address: '105 Atlantic Ave., Kure Beach, NC 28449' },
+  { pattern: /veterans\s*park/i,             name: 'Veterans Park',                    address: '835 Halyburton Memorial Pkwy, Wilmington, NC 28412' },
+  // Breweries & taprooms
+  { pattern: /flytrap\s*brew/i,              name: 'Flytrap Brewing',                  address: '319 Walnut St., Wilmington, NC 28401' },
+  { pattern: /mad\s*mole/i,                  name: 'Mad Mole Brewing',                 address: '6309 Boathouse Rd., Wilmington, NC 28405' },
+  { pattern: /flying\s*machine/i,            name: 'Flying Machine Brewing Company',   address: '3130 Randall Pkwy., Wilmington, NC 28403' },
+  { pattern: /wilmington\s*brew/i,           name: 'Wilmington Brewing Company',       address: '824 S. Kerr Ave., Wilmington, NC 28403' },
+  { pattern: /waterline\s*brew/i,            name: 'Waterline Brewing Company',        address: '721 Surry St., Wilmington, NC 28401' },
+  { pattern: /wrightsville\s*beach\s*brew/i, name: 'Wrightsville Beach Brewery',       address: '6201 Oleander Dr., Wilmington, NC 28403' },
+  { pattern: /leland\s*brew/i,               name: 'Leland Brewing Co.',               address: '133 Fayetteville Rd., Leland, NC 28451' },
+  { pattern: /salty\s*turtle/i,              name: 'Salty Turtle Beer Company',        address: '103 Triton Ln., Surf City, NC 28445' },
+  { pattern: /sandpiper\s*brew/i,            name: 'Sandpiper Brewing Company',        address: '624 E. Ocean Rd., Holly Ridge, NC 28445' },
+  { pattern: /scapegoat/i,                   name: 'The Scapegoat Taproom',            address: '2789 Compass Pointe South Wynd NE, Leland, NC 28451' },
+  { pattern: /lbc\s*bottle/i,               name: 'LBC Bottle Shop',                   address: '4628 Oleander Dr., Wilmington, NC 28403' },
+  { pattern: /edward\s*teach/i,              name: 'Edward Teach Brewing',             address: '604 N. 4th St., Wilmington, NC 28401' },
+  // Food truck parks & markets
+  { pattern: /chow\s*town/i,                 name: 'Chow Town Food Truck Park',        address: '1101 N. 4th St., Wilmington, NC 28401' },
+  { pattern: /riverlights/i,                 name: 'Riverlights',                      address: '810 Cupola Dr., Wilmington, NC 28412' },
+  { pattern: /cargo\s*district/i,            name: 'The Cargo District',               address: '110 Cargo District, Wilmington, NC 28403' },
+  // Schools & institutions
+  { pattern: /cfcc\s*north|cape\s*fear\s*community\s*college\s*north/i, name: 'Cape Fear Community College North Campus', address: '4500 Blue Clay Rd., Castle Hayne, NC 28429' },
+  { pattern: /cfcc|cape\s*fear\s*community\s*college(?!\s*north)/i,     name: 'Cape Fear Community College Wilmington',  address: '411 N. Front St., Wilmington, NC 28401' },
+  { pattern: /\buncw\b|unc\s*wilmington/i,   name: 'UNC Wilmington',                   address: '601 S. College Rd., Wilmington, NC 28403' },
+  // Shopping & retail
+  { pattern: /mayfaire/i,                    name: 'Mayfaire Town Center',             address: '900 Inspiration Dr., Wilmington, NC 28405' },
+  { pattern: /independence\s*mall/i,         name: 'Independence Mall',                address: '3500 Oleander Dr., Wilmington, NC 28403' },
+  // Other frequent spots
+  { pattern: /eagle\s*island/i,              name: 'Eagle Island Fruit & Seafood',     address: '2500 US-421, Wilmington, NC 28401' },
+  { pattern: /hudson.?s\s*hardware/i,        name: "Hudson's Hardware",                address: '6301 Castle Hayne Rd., Castle Hayne, NC 28429' },
+  { pattern: /wrightsville\s*beach/i,        name: 'Wrightsville Beach',               address: 'Wrightsville Beach, NC 28480' },
+  { pattern: /greenfield\s*lake/i,           name: 'Greenfield Lake Park',             address: '4100 S 16th St., Wilmington, NC 28401' },
+  { pattern: /brooklyn\s*arts/i,             name: 'Brooklyn Arts Center',             address: '516 N. 4th St., Wilmington, NC 28401' },
+  { pattern: /soda\s*pop/i,                  name: 'Soda Pops',                        address: '2029 S 17th St., Wilmington, NC 28401' },
+  { pattern: /wave\s*transit/i,              name: 'Wave Transit Station',             address: '505 Cando St., Wilmington, NC 28405' },
 ];
 
 // Day-of-week patterns
