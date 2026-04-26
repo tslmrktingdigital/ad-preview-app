@@ -326,6 +326,61 @@ const trucks = [
     description: 'Authentic Mexican tacos with a 5-star reputation in Wilmington.',
     cuisineTypes: ['mexican'],
   },
+  // ── Additional trucks from Yelp (batch 4) ──
+  {
+    name: 'Klondyke Farms Cafe',
+    slug: 'klondyke-farms-cafe',
+    description: 'Farm-based coffee and cafe truck serving the Wilmington area all day.',
+    cuisineTypes: ['coffee'],
+  },
+  {
+    name: "Surf's Up Hawaiian Shaved Ice",
+    slug: 'surfs-up-hawaiian-shaved-ice',
+    description: 'Real Hawaiian shaved ice — not snow cones — served with ice cream, based in Hampstead.',
+    cuisineTypes: ['desserts'],
+  },
+  {
+    name: "Papadom's Singing Sangwich Truck",
+    slug: 'papadoms-singing-sangwich',
+    description: 'Italian-inspired sandwiches and fast food from a Wilmington festival circuit truck.',
+    cuisineTypes: ['italian'],
+  },
+  {
+    name: 'The Coffee Corner',
+    slug: 'the-coffee-corner',
+    description: 'Early-morning cafe truck serving Winnabow and surrounding areas.',
+    cuisineTypes: ['coffee'],
+  },
+  {
+    name: "Brandon's Burritos Food Truck",
+    slug: 'brandons-burritos',
+    description: 'Burrito-focused food truck serving Wilmington.',
+    cuisineTypes: ['mexican'],
+  },
+  {
+    name: 'Vital Seen',
+    slug: 'vital-seen',
+    description: 'Vegan and gluten-free food truck — a hit at events and work appreciation gatherings.',
+    cuisineTypes: ['vegan'],
+  },
+  {
+    name: 'Cruising Cuisine',
+    slug: 'cruising-cuisine',
+    description: 'Seafood sandwiches and coastal bites out of Leland.',
+    cuisineTypes: ['seafood', 'american'],
+  },
+  {
+    name: "Millie's Hot Dogs",
+    slug: 'millies-hot-dogs',
+    description: 'Classic hot dogs served fresh from a Wilmington food truck.',
+    cuisineTypes: ['american'],
+  },
+  {
+    name: 'Woo Saa Eatz',
+    slug: 'woo-saa-eatz',
+    description: 'Wilmington area food truck.',
+    cuisineTypes: ['other'],
+  },
 ];
 
 // De-duplicate by slug (last one wins for dupes in the array)
