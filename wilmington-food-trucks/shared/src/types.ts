@@ -51,6 +51,7 @@ export interface FoodTruck {
   slug: string;
   description?: string;
   cuisineTypes: CuisineType[];
+  menuItems: string[];
   logoUrl?: string;
   coverImageUrl?: string;
   phone?: string;

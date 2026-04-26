@@ -62,9 +62,10 @@ export default async function TruckPage({ params }: Props) {
           <UtensilsCrossed className="w-3.5 h-3.5 text-stone-400" />
           <h2 className="text-xs font-bold text-stone-400 uppercase tracking-widest">Menu</h2>
         </div>
-        <div className="card px-5 py-4 space-y-3">
+        <div className="card overflow-hidden">
+          {/* Cuisine type pills */}
           {truck.cuisineTypes.length > 0 && (
-            <div className="flex gap-2 flex-wrap">
+            <div className="px-5 pt-4 pb-3 flex gap-2 flex-wrap border-b border-stone-100">
               {truck.cuisineTypes.map((c) => (
                 <span key={c} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-orange-50 text-orange-700 text-sm font-semibold border border-orange-200">
                   {CUISINE_EMOJI[c] ?? '🍽️'} {CUISINE_LABELS[c] ?? c}
@@ -72,11 +73,34 @@ export default async function TruckPage({ params }: Props) {
               ))}
             </div>
           )}
-          {truck.description && (
-            <p className="text-stone-600 text-sm leading-relaxed">{truck.description}</p>
+
+          {/* Top menu items */}
+          {truck.menuItems && truck.menuItems.length > 0 && (
+            <div className="px-5 py-4 border-b border-stone-100">
+              <p className="text-xs font-bold text-stone-400 uppercase tracking-widest mb-3">Popular Items</p>
+              <div className="space-y-2">
+                {truck.menuItems.slice(0, 3).map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
+                    <span className="w-6 h-6 rounded-full bg-orange-100 text-orange-600 text-xs font-bold flex items-center justify-center flex-shrink-0">
+                      {i + 1}
+                    </span>
+                    <span className="text-sm font-medium text-stone-800">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
+
+          {/* Description */}
+          {truck.description && (
+            <div className="px-5 py-4 border-b border-stone-100">
+              <p className="text-stone-500 text-sm leading-relaxed">{truck.description}</p>
+            </div>
+          )}
+
+          {/* Social links */}
           {socialLinks.length > 0 && (
-            <div>
+            <div className="px-5 py-3">
               <p className="text-xs text-stone-400 mb-2">Full menu on their socials:</p>
               <div className="flex gap-2 flex-wrap">
                 {socialLinks.map(({ url, icon: Icon, label }) => (
