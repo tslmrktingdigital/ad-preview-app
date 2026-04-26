@@ -271,6 +271,61 @@ const trucks = [
     description: 'Bakery-quality baked goods from a food truck — worth tracking down when spotted around town.',
     cuisineTypes: ['other'],
   },
+  // ── Additional trucks from Yelp (batch 3) ──
+  {
+    name: 'Kitchen Ahimsa',
+    slug: 'kitchen-ahimsa',
+    description: 'Plant-based and vegan snacks — kale chips and more at Wilmington\'s Riverfront Farmers\' Market.',
+    cuisineTypes: ['vegan'],
+  },
+  {
+    name: 'Port City Pops Ice Cream Truck',
+    slug: 'port-city-pops',
+    description: 'Ice cream and frozen treats on wheels all around Wilmington.',
+    cuisineTypes: ['desserts'],
+  },
+  {
+    name: 'Astro Dogs',
+    slug: 'astro-dogs',
+    description: 'Creative hot dogs with Korean-inspired toppings — a surprisingly addictive Wilmington find.',
+    cuisineTypes: ['asian', 'american'],
+  },
+  {
+    name: "Pepe's Tacos",
+    slug: 'pepes-tacos',
+    description: 'Mexican street tacos and classics served around Wilmington.',
+    cuisineTypes: ['mexican'],
+  },
+  {
+    name: 'Tackle Box Kitchen',
+    slug: 'tackle-box-kitchen',
+    description: 'Seafood tacos and coastal bites from a Wilmington food truck.',
+    cuisineTypes: ['seafood', 'mexican'],
+  },
+  {
+    name: 'Kono Pizza',
+    slug: 'kono-pizza',
+    description: 'Franchise food truck serving pizza in a cone — spotted at Broomtail Brewery and events.',
+    cuisineTypes: ['italian'],
+  },
+  {
+    name: 'CBT Burger',
+    slug: 'cbt-burger',
+    description: 'Unique and original burgers with bold flavor combinations.',
+    cuisineTypes: ['american'],
+  },
+  {
+    name: 'Rude Bwoys Jerk Grill Food Truck',
+    slug: 'rude-bwoys-jerk-grill',
+    description: 'Caribbean jerk BBQ truck — a favorite at the Alcove Beer Garden in The Cargo District.',
+    cuisineTypes: ['caribbean', 'bbq'],
+  },
+  {
+    name: 'Los Compas Taco Zone',
+    slug: 'los-compas-taco-zone',
+    description: 'Authentic Mexican tacos with a 5-star reputation in Wilmington.',
+    cuisineTypes: ['mexican'],
+  },
 ];
 
 // De-duplicate by slug (last one wins for dupes in the array)
