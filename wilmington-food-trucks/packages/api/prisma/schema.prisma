@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model FoodTruck {
+  id             String          @id @default(cuid())
+  name           String
+  slug           String          @unique
+  description    String?
+  cuisineTypes   String[]
+  logoUrl        String?
+  coverImageUrl  String?
+  phone          String?
+  email          String?
+  facebookUrl    String?
+  instagramUrl   String?
+  twitterUrl     String?
+  websiteUrl     String?
+  isActive       Boolean         @default(true)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  schedule       ScheduleEntry[]
+  posts          SocialPost[]
+  crawlLogs      CrawlLog[]
+
+  @@map("food_trucks")
+}
+
+model ScheduleEntry {
+  id           String    @id @default(cuid())
+  truck        FoodTruck @relation(fields: [truckId], references: [id], onDelete: Cascade)
+  truckId      String
+  date         DateTime  @db.Date
+  startTime    String
+  endTime      String
+  locationName String
+  address      String
+  lat          Float?
+  lng          Float?
+  notes        String?
+  sourceUrl    String?
+  scrapedAt    DateTime  @default(now())
+
+  @@index([truckId, date])
+  @@map("schedule_entries")
+}
+
+model SocialPost {
+  id        String    @id @default(cuid())
+  truck     FoodTruck @relation(fields: [truckId], references: [id], onDelete: Cascade)
+  truckId   String
+  platform  String
+  postUrl   String    @unique
+  text      String
+  imageUrl  String?
+  postedAt  DateTime?
+  scrapedAt DateTime  @default(now())
+
+  @@index([truckId, platform])
+  @@map("social_posts")
+}
+
+model CrawlLog {
+  id        String    @id @default(cuid())
+  truck     FoodTruck @relation(fields: [truckId], references: [id], onDelete: Cascade)
+  truckId   String
+  source    String
+  sourceUrl String
+  status    String    // success | partial | failed
+  errors    String[]
+  crawledAt DateTime  @default(now())
+
+  @@index([truckId])
+  @@map("crawl_logs")
+}
