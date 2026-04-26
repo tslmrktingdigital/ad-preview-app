@@ -29,9 +29,14 @@ export function TrucksList({ trucks }: Props) {
 
   const cuisines = [...new Set(trucks.flatMap((t) => t.cuisineTypes))].sort();
 
-  const filtered = active
+  const filtered = (active
     ? trucks.filter((t) => t.cuisineTypes.includes(active))
-    : trucks;
+    : trucks
+  ).sort((a, b) => {
+    const aOut = a.schedule.length > 0 ? 0 : 1;
+    const bOut = b.schedule.length > 0 ? 0 : 1;
+    return aOut - bOut;
+  });
 
   return (
     <div className="space-y-5">
