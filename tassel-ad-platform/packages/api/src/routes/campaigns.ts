@@ -9,6 +9,7 @@ import {
 } from '../services/campaign-service.js';
 import { generateQueue } from '../jobs/generate-job.js';
 import { buildPreviewLink } from '../services/preview-service.js';
+import { exportCampaignToExcel } from '../services/export-service.js';
 import { prisma } from '../lib/prisma.js';
 import type { ApiResponse } from '@tassel/types';
 
@@ -131,6 +132,33 @@ campaignsRouter.get('/:id/ads', async (req, res, next) => {
   try {
     const ads = await listAdDrafts(req.params.id);
     res.json({ success: true, data: ads } satisfies ApiResponse);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/campaigns/:id/export.xlsx — Download campaign + ad drafts as Excel
+campaignsRouter.get('/:id/export.xlsx', async (req, res, next) => {
+  try {
+    const campaign = await prisma.campaign.findUniqueOrThrow({
+      where: { id: req.params.id },
+      select: { name: true },
+    });
+
+    const buffer = await exportCampaignToExcel(req.params.id);
+
+    const safeName = campaign.name.replace(/[^a-z0-9]/gi, '-').toLowerCase();
+    const date = new Date().toISOString().split('T')[0];
+
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    );
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename="campaign-${safeName}-${date}.xlsx"`,
+    );
+    res.send(buffer);
   } catch (err) {
     next(err);
   }

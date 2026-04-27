@@ -3,7 +3,9 @@ import { z } from 'zod';
 import { validate } from '../lib/validate.js';
 import { getAdById, updateAdStatus, updateAdCopy } from '../services/ad-service.js';
 import { buildPreviewLink } from '../services/preview-service.js';
+import { exportAdsQueueToExcel } from '../services/export-service.js';
 import { publishQueue } from '../jobs/publish-job.js';
+import { videoQueue } from '../jobs/video-job.js';
 import { prisma } from '../lib/prisma.js';
 import type { ApiResponse } from '@tassel/types';
 
@@ -23,6 +25,21 @@ const rejectSchema = z.object({
 });
 
 // ── Routes ───────────────────────────────────────────────────────────────────
+
+// GET /api/ads/export.xlsx — must be before /:id to avoid being caught as an id
+adsRouter.get('/export.xlsx', async (req, res, next) => {
+  try {
+    const status = typeof req.query.status === 'string' ? req.query.status : undefined;
+    const buffer = await exportAdsQueueToExcel(status);
+    const date = new Date().toISOString().split('T')[0];
+    const filenameParts = ['ad-queue', status, date].filter(Boolean).join('-');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${filenameParts}.xlsx"`);
+    res.send(buffer);
+  } catch (err) {
+    next(err);
+  }
+});
 
 // GET /api/ads — list all ads (optionally ?status=draft|approved|etc.)
 adsRouter.get('/', async (req, res, next) => {
@@ -145,3 +162,52 @@ adsRouter.get('/:id/publish-status', async (req, res, next) => {
     next(err);
   }
 });
+
+// POST /api/ads/:id/generate-video — Enqueue Luma AI video generation job
+adsRouter.post('/:id/generate-video', async (req, res, next) => {
+  try {
+    const ad = await prisma.adDraft.findUniqueOrThrow({
+      where: { id: req.params.id },
+      select: { id: true, videoStatus: true },
+    });
+
+    // Don't re-queue if already generating
+    if (ad.videoStatus === 'generating') {
+      res.status(409).json({
+        success: false,
+        error: 'Video generation already in progress',
+      } satisfies ApiResponse);
+      return;
+    }
+
+    // Reset any previous attempt
+    await prisma.adDraft.update({
+      where: { id: ad.id },
+      data: { videoStatus: 'pending', videoUrl: null, videoError: null, videoJobId: null },
+    });
+
+    const job = await videoQueue.add(
+      'generate-video',
+      { adDraftId: ad.id },
+      { attempts: 2, backoff: { type: 'fixed', delay: 10_000 } },
+    );
+
+    res.json({ success: true, data: { jobId: job.id } } satisfies ApiResponse);
+  } catch (err) {
+    next(err);
+  }
+});
+
+// GET /api/ads/:id/video-status — Poll video generation progress
+adsRouter.get('/:id/video-status', async (req, res, next) => {
+  try {
+    const ad = await prisma.adDraft.findUniqueOrThrow({
+      where: { id: req.params.id },
+      select: { videoStatus: true, videoUrl: true, videoError: true, videoJobId: true },
+    });
+    res.json({ success: true, data: ad } satisfies ApiResponse);
+  } catch (err) {
+    next(err);
+  }
+});
+

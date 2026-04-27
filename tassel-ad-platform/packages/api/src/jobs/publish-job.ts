@@ -73,9 +73,10 @@ export const publishWorker = new Worker<PublishJobData>(
     const creative = await meta.createAdCreative(client.metaAccountId, {
       name: `[Tassel] ${ad.headline}`,
       object_story_spec: {
+        page_id: client.metaPageId ?? undefined,
         link_data: {
           message: ad.primaryText,
-          link: 'https://example.com', // TODO: pull from client record
+          link: client.websiteUrl ?? 'https://example.com',
           name: ad.headline,
           description: ad.description ?? '',
           call_to_action: { type: ad.cta },
